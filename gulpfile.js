@@ -22,7 +22,7 @@ gulp.task('deploy', ["default"], function() {
     ghPages.publish(path.join(__dirname, "/build"), {
         debug: true,
         push: true,
-        repo: "git@github.com:tqc/plainish-text.git"
+        repo: "git@github.com:tqc/browserify-build-status.git"
     },
         function(err) {
             if (err) console.log(err);

@@ -60,7 +60,7 @@ function statusReporter(b, opts) {
     };
 
     statusReporter.writeFile = function(outputFile) {
-        fs.writeFileSync(outputFile, getErrorScript("Build Incomplete", "Browserify build in progress - try again in a few seconds.", selector));
+        fs.writeFileSync(outputFile, getErrorScript("Build Incomplete", "Browserify build in progress - try again in a few seconds.", "", "", selector));
         var buffer = "";
         var writer = new stream.Writable();
 

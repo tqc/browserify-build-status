@@ -1,0 +1,91 @@
+@import "../src/index.scss";
+
+body {
+    font-family: Helvetica, Arial;
+    margin: 0;
+    background-color: #157C45;
+}
+
+.vcontainer {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.toprow {
+    background-image: url(bg.jpg);
+    background-size: cover;
+    color: white;
+    padding: 2em 0;
+    text-align: center;
+    margin-bottom: 0em;
+    h1 {
+        margin: 0 0;
+        font-size: 48pt;
+    }
+    a {
+        color: white;
+    }
+    p {
+        margin-top: 3em;
+    }
+}
+
+.middlerow {
+    background-color: white;
+    flex-grow: 1;
+    padding-bottom: 2em;
+}
+
+.bottomrow {
+    background-color: #5088B5;
+    background-image: url(bg.jpg);
+    background-size: cover;
+    color: white;
+    text-align: center;
+    a {
+        color: white;
+    }
+
+}
+
+
+.container {
+    margin: auto;
+    max-width: 750px;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+[plainish-text] {
+    border: 1px solid silver;
+    font-family: Courier;
+    padding: 0 10px;
+    height: 200px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -10px;
+}
+
+.htmlview {
+    margin-right: 10px;
+    min-width: 355px;
+    width: 355px;
+    flex-grow: 1;
+    > div {
+        border: 1px solid silver;
+        padding: 10px;
+        overflow-x:hidden;
+        font-size: 10pt;
+        font-family: Courier;
+        height: 200px;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+

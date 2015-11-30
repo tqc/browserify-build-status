@@ -1,0 +1,30 @@
+{
+  "name": "browserify-build-status",
+  "version": "1.0.0",
+  "description": "Display browserify build status on the output page",
+  "homepage": "http://tqc/github.io/browserify-build-status",
+  "repository": {
+    "url": "http://github.com/tqc/browserify-build-status"
+  },
+  "scripts": {
+    "test": "eslint ."
+  },
+  "main": "src/index.js",
+  "keywords": [
+    "browserify"
+  ],
+  "author": "Tom Clarkson",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-eslint": "*",
+    "eslint": "^1.9.0",
+    "eslint-config-defaults": "^7.1.1",
+    "gh-pages": "^0.3.1",
+    "gulp": "^3.9.0",
+    "gulp-develop-server": "^0.5.0",
+    "gulp-sass": "^2.1.0"
+  },
+  "engines": {
+    "node": "^4.2.2"
+  }
+}

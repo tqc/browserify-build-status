@@ -1,0 +1,48 @@
+<html>
+<link rel="stylesheet" href="index.css">
+<div class="vcontainer">
+<div class="toprow">
+    <div class="container">
+<h1>Browserify Build Status</h1>
+<p>Display browserify build status on the output page.</p>
+
+<p>Get it from <a href="https://github.com/tqc/browserify-build-status">GitHub</a> or <a href="https://www.npmjs.com/package/browserify-build-status">npm</a>
+
+    </div>
+</div>
+
+<div class="middlerow">
+<div class="container">
+
+<h3>Usage</h3>
+
+<pre>
+    var statusReporter = require("browserify-build-status");
+    
+    var b = browserify(...)
+    // plugin adds error handlers to the browserify object
+    b.plugin(statusReporter, opts);
+    b = b.bundle()
+    // writeFile sets the "build incomplete" message and waits for 
+    // browserify to finish before writing either the finished build 
+    // output or an error message.
+    b = b.pipe(statusReporter.writeFile("app.js"));
+</pre>
+
+<h3>Default options</h3>
+
+<pre>
+    {
+        // selector for the element that will be updated with any error message
+        selector: "body"
+    }
+</pre>
+
+</div>
+</div>
+<div class="bottomrow">
+    <div class="container">
+    <p>Browserify Build Status is developed by Sydney-based full stack developer <a href="http://tqclarkson.com/">Tom Clarkson</a></p>
+    </div>
+</div>
+</div>

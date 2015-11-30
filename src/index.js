@@ -2,21 +2,20 @@ var fs = require("fs");
 var path = require("path");
 var stream = require('stream');
 
+function getErrorScript(title, msg, source, detail, selector) {
+    var errorReporter = fs.readFileSync(path.resolve(__dirname, "./reporterror.js"), "utf-8");
+    errorReporter = errorReporter.replace("\"[SELECTOR]\"", JSON.stringify(selector || "body"));
+    errorReporter = errorReporter.replace("\"[TITLE]\"", JSON.stringify(title || "Error"));
+    errorReporter = errorReporter.replace("\"[MESSAGE]\"", JSON.stringify(msg || "Something went wrong"));
+    errorReporter = errorReporter.replace("\"[SOURCE]\"", JSON.stringify(source || ""));
+    errorReporter = errorReporter.replace("\"[DETAIL]\"", JSON.stringify(detail || ""));
+    return errorReporter;
+}
+
 function statusReporter(b, opts) {
     var bundle = b.bundle;
     opts = opts || {};
     var selector = opts.selector || "body";
-
-    function getErrorScript(title, msg, source, detail) {
-        var errorReporter = fs.readFileSync(path.resolve(__dirname, "./reporterror.js"), "utf-8");
-
-        errorReporter = errorReporter.replace("\"[SELECTOR]\"", JSON.stringify(selector));
-        errorReporter = errorReporter.replace("\"[TITLE]\"", JSON.stringify(title || "Error"));
-        errorReporter = errorReporter.replace("\"[MESSAGE]\"", JSON.stringify(msg || "Something went wrong"));
-        errorReporter = errorReporter.replace("\"[SOURCE]\"", JSON.stringify(source || ""));
-        errorReporter = errorReporter.replace("\"[DETAIL]\"", JSON.stringify(detail || ""));
-        return errorReporter;
-    }
 
     b.bundle = function(cb) {
         var output = new stream.Transform();
@@ -51,7 +50,7 @@ function statusReporter(b, opts) {
 
             }
 
-            output.push(getErrorScript("BuildError", msg, source, detail));
+            output.push(getErrorScript("BuildError", msg, source, detail, selector));
             output.push(null);
             pipeline.unpipe(output);
         });
@@ -60,20 +59,17 @@ function statusReporter(b, opts) {
         return output;
     };
 
-
-    this.writeFile = function(outputFile) {
-        console.log("writing progress file");
-        fs.writeFileSync(outputFile, getErrorScript("Build Incomplete", "Browserify build in progress - try again in a few seconds."));
+    statusReporter.writeFile = function(outputFile) {
+        fs.writeFileSync(outputFile, getErrorScript("Build Incomplete", "Browserify build in progress - try again in a few seconds.", selector));
         var buffer = "";
         var writer = new stream.Writable();
-        
+
         writer._write = function(chunk, enc, next) {
             buffer += chunk;
             next();
         };
-        
+
         writer.on("finish", function() {
-            console.log("Finished writing file");
             fs.writeFileSync(outputFile, buffer);
         });
 
@@ -81,9 +77,8 @@ function statusReporter(b, opts) {
 
     }
 
-    this.getErrorScript = getErrorScript;
 
-    return this;
 }
 
 module.exports = statusReporter;
+statusReporter.getErrorScript = getErrorScript;

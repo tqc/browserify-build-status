@@ -1,6 +1,6 @@
 {
   "name": "browserify-build-status",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Display browserify build status on the output page",
   "homepage": "http://tqc/github.io/browserify-build-status",
   "repository": {

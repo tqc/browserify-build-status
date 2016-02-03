@@ -19,6 +19,8 @@ function statusReporter(b, opts) {
 
     b.bundle = function(cb) {
         var output = new stream.Transform();
+        var lastError;
+
         output._transform = function(chunk, enc, callback) {
             callback(null, chunk);
         };
@@ -29,6 +31,7 @@ function statusReporter(b, opts) {
             console.error('Browserify error: %s', err);
         });
         pipeline.once('error', function(err) {
+            lastError = err;
             var msg = err.message;
             var source = "";
             var detail = "";
@@ -53,7 +56,11 @@ function statusReporter(b, opts) {
             output.push(getErrorScript("BuildError", msg, source, detail, selector));
             output.push(null);
             pipeline.unpipe(output);
+            if (opts.onError) opts.onError(err);
         });
+        pipeline.on("end", function() {               
+            if (opts.onComplete) opts.onComplete(lastError);
+        });  
 
         pipeline.pipe(output);
         return output;

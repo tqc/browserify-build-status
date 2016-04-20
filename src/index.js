@@ -12,6 +12,53 @@ function getErrorScript(title, msg, source, detail, selector) {
     return errorReporter;
 }
 
+function getErrorScriptFromError(err, selector) {
+    try {
+        var title = "Build Error";
+        var msg = err.message;
+        var source = "";
+        var detail = "";
+        var fn;
+        var errorLine;
+        var errorCol;
+
+        // browserify / traceur format
+        var m = /(.*):(\d+):(\d+): (.*)/.exec(msg);
+        if (m && m.length >= 5) {
+            msg = m[4];
+            fn = m[1];
+            errorLine = parseInt(m[2]);
+            errorCol = parseInt(m[3]);
+        }
+        // rollup / babel format
+        m = /(.*)\((\d+):(\d+)\) in (.*)/.exec(msg);
+        if (m && m.length >= 5) {
+            msg = m[1];
+            fn = m[4];
+            errorLine = parseInt(m[2]);
+            errorCol = parseInt(m[3]);
+        }
+
+        if (fn) {
+            source = fn + ":" + errorLine + ":" + errorCol;
+            detail = "";
+
+            var sc = fs.readFileSync(fn, "utf-8").split("\n");
+            for (var i2 = errorLine - 4; i2 < errorLine + 3; i2++) {
+                var l = sc[i2];
+                if (l === undefined) continue;
+                detail += l + "\n";
+            }
+        }
+
+        return getErrorScript(title, msg, source, detail, selector);
+    } catch(e) {
+        console.log(e);
+        return getErrorScript("Error", "Something went wrong");
+    }
+}
+
+
 function statusReporter(b, opts) {
     var bundle = b.bundle;
     opts = opts || {};
@@ -32,28 +79,7 @@ function statusReporter(b, opts) {
         });
         pipeline.once('error', function(err) {
             lastError = err;
-            var msg = err.message;
-            var source = "";
-            var detail = "";
-
-            var m = /(.*):(\d+):(\d+): (.*)/.exec(msg);
-            if (m && m.length >= 5) {
-                msg = m[4];
-                var fn = m[1];
-                var errorLine = parseInt(m[2]);
-                source = m[1] + ":" + m[2] + ":" + m[3];
-                detail = "";
-
-                var sc = fs.readFileSync(fn, "utf-8").split("\n");
-                for (var i2 = errorLine - 4; i2 < errorLine + 3; i2++) {
-                    var l = sc[i2];
-                    if (l === undefined) continue;
-                    detail += l + "\n";
-                }
-
-            }
-
-            output.push(getErrorScript("BuildError", msg, source, detail, selector));
+            output.push(getErrorScriptFromError(err));
             output.push(null);
             pipeline.unpipe(output);
             if (opts.onError) opts.onError(err);
@@ -89,3 +115,4 @@ function statusReporter(b, opts) {
 
 module.exports = statusReporter;
 statusReporter.getErrorScript = getErrorScript;
+statusReporter.getErrorScriptFromError = getErrorScriptFromError;
